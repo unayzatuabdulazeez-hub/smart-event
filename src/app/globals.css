@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --brand: #7A1F3D; --brand2: #0F7B5F; }
+html { -webkit-text-size-adjust: 100%; }
+body { @apply bg-cream-100 text-charcoal font-sans antialiased; }
+:focus-visible { outline: 3px solid #C9962B; outline-offset: 2px; border-radius: 8px; }
+
+/* Subtle woven-cloth texture for headers: restrained, not decorative noise */
+.kente {
+  background-image:
+    repeating-linear-gradient(90deg, rgba(201,150,43,.55) 0 6px, transparent 6px 18px),
+    repeating-linear-gradient(90deg, rgba(15,123,95,.55) 0 3px, transparent 3px 18px);
+  background-size: 18px 3px, 18px 3px; background-repeat: repeat-x; background-position: 0 0, 9px 4px; height: 8px;
+}
+.pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+}
+@keyframes shimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }
+.skeleton { background: linear-gradient(90deg,#efe6d2 25%,#f8f1e1 50%,#efe6d2 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 12px; }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
