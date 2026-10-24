@@ -46,7 +46,11 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
       }
       router.refresh();
     } catch (err) {
-      setError(friendlyError(err, mode === 'signup' ? 'Unable to create your account. Please try again.' : 'Unable to log in. Please try again.'));
+      const fallback = mode === 'signup' ? 'Unable to create your account. Please try again.' : 'Unable to log in. Please try again.';
+      const friendly = friendlyError(err, fallback);
+      const reason = (err as { message?: string } | null)?.message;
+      // Show the provider's reason only when we have no friendlier wording, so setup problems are diagnosable.
+      setError(friendly === fallback && reason ? `${fallback} (${reason})` : friendly);
     } finally { setBusy(false); }
   }
 
@@ -74,4 +78,4 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
       </div>
     </main>
   );
-}
+          }
