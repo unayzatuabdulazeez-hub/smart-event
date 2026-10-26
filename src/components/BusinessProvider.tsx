@@ -4,8 +4,9 @@ import { useRouter, usePathname } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import type { Business } from '@/lib/types';
 import { Skeleton, ErrorBox } from './ui';
+import SubscriptionGate, { type Subscription } from './SubscriptionGate';
 
-interface Ctx { business: Business; userId: string; userName: string; refresh: () => Promise<void> }
+interface Ctx { business: Business; userId: string; userName: string; subscription: Subscription | null; hasAccess: boolean; userEmail: string; refresh: () => Promise<void> }
 const BusinessContext = createContext<Ctx | null>(null);
 export const useBusiness = () => {
   const c = useContext(BusinessContext);
@@ -16,7 +17,7 @@ export const useBusiness = () => {
 export default function BusinessProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const path = usePathname();
-  const [state, setState] = useState<{ business: Business; userId: string; userName: string } | null>(null);
+  const [state, setState] = useState<{ business: Business; userId: string; userName: string; userEmail: string; subscription: Subscription | null; hasAccess: boolean } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -30,9 +31,14 @@ export default function BusinessProvider({ children }: { children: React.ReactNo
       if (!member) { if (window.location.pathname !== '/app/onboarding') router.replace('/app/onboarding'); setState(null); return; }
       const { data: biz, error: bErr } = await sb.from('businesses').select('*').eq('id', member.business_id).single();
       if (bErr) throw bErr;
-      setState({ business: biz as Business, userId: user.id, userName: (user.user_metadata?.full_name as string) || '' });
-    } catch {
-      setError('Unable to load your workspace. Your internet connection may be unstable.');
+      const { data: sub, error: sErr } = await sb.from('subscriptions').select('status, paid_until').eq('business_id', member.business_id).maybeSingle();
+      if (sErr) throw sErr;
+      const subscription = (sub as Subscription | null) ?? null;
+      const hasAccess = !!subscription && subscription.status === 'active' && !!subscription.paid_until && new Date(subscription.paid_until) > new Date();
+      setState({ business: biz as Business, userId: user.id, userName: (user.user_metadata?.full_name as string) || '', userEmail: user.email ?? '', subscription, hasAccess });
+    } catch (e) {
+      const reason = (e as { message?: string } | null)?.message;
+      setError(reason ? `Unable to load your workspace. (${reason})` : 'Unable to load your workspace. Please try again.');
     }
   }, [router]);
 
@@ -43,5 +49,6 @@ export default function BusinessProvider({ children }: { children: React.ReactNo
   if (path === '/app/onboarding') return <>{children}</>;
   if (error) return <div className="mx-auto max-w-md p-6"><ErrorBox message={error} onRetry={load} /></div>;
   if (!state) return <div className="mx-auto max-w-md space-y-4 p-6"><Skeleton className="h-10" /><Skeleton className="h-40" /><Skeleton className="h-40" /></div>;
+  if (!state.hasAccess) return <SubscriptionGate businessName={state.business.name} email={state.userEmail} subscription={state.subscription} onCheckAgain={load} />;
   return <BusinessContext.Provider value={{ ...state, refresh: load }}>{children}</BusinessContext.Provider>;
 }
