@@ -14,9 +14,10 @@ export default function Landing() {
           Bookings, quotes, deposits and balances, vendors and profit, plus a beautiful private page for every customer. Built for caterers, small-chops vendors and event planners.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href="/signup" className="inline-flex min-h-[52px] items-center rounded-xl bg-burgundy px-7 font-semibold text-white hover:bg-burgundy-600">Start for free</Link>
+          <Link href="/signup" className="inline-flex min-h-[52px] items-center rounded-xl bg-burgundy px-7 font-semibold text-white hover:bg-burgundy-600">Create your account</Link>
           <Link href="/login" className="inline-flex min-h-[52px] items-center rounded-xl border border-charcoal-100 bg-white px-7 font-semibold hover:bg-cream-200">Log in</Link>
         </div>
+        <p className="mx-auto mt-4 max-w-md text-sm text-charcoal-300">₦2,999 per month, paid by bank transfer. Your account is switched on once we confirm your payment.</p>
         <ul className="mx-auto mt-12 grid max-w-2xl gap-3 text-left sm:grid-cols-2">
           {['Know who owes you what, instantly', 'Send professional quotes on WhatsApp', 'Give every customer a private event page', 'See your real profit for every event'].map((t) => (
             <li key={t} className="rounded-2xl bg-white p-4 text-sm font-semibold shadow-card">✓ {t}</li>
