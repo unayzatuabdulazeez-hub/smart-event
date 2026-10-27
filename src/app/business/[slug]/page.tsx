@@ -5,6 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase/server';
 import { whatsappLink } from '@/lib/whatsapp';
 import { contrast, readableOn, safeColor } from '@/lib/color';
 import { PoweredBy } from '@/components/ui';
+import BookingRequestForm from '@/components/BookingRequestForm';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,6 +40,7 @@ export default async function BusinessPage({ params }: { params: { slug: string 
       <div className="mx-auto max-w-xl space-y-5 px-5 py-8">
         {b.description && <p className="text-center text-lg">{b.description}</p>}
         {b.services?.length > 0 && <ul className="flex flex-wrap justify-center gap-2">{b.services.map((s) => <li key={s} className="rounded-full bg-white px-4 py-2 text-sm font-semibold shadow-card">{s}</li>)}</ul>}
+        <BookingRequestForm slug={params.slug} businessName={b.name} contact={b.whatsapp || b.phone} services={b.services ?? []} brand={brand} on={on} />
         <div className="grid gap-3">
           {wa && <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-2xl px-6 font-bold" style={{ background: brand, color: on }}><MessageCircle className="h-5 w-5" /> Chat on WhatsApp</a>}
           {b.phone && <a href={`tel:${b.phone}`} className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-2xl border-2 bg-white px-6 font-bold" style={{ borderColor: brand, color: brandText }}><Phone className="h-5 w-5" /> Call us</a>}
