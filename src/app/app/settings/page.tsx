@@ -8,7 +8,8 @@ import { SERVICE_OPTIONS } from '@/lib/status';
 import { Badge, Button, Card, ErrorBox, PageHeader, PoweredBy, cx, useToast } from '@/components/ui';
 
 export default function Settings() {
-  const { business, refresh } = useBusiness();
+  const { business, refresh, subscription } = useBusiness();
+  const paidUntil = subscription?.paid_until ? new Date(subscription.paid_until).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
   const router = useRouter();
   const { toast, node } = useToast();
   const [services, setServices] = useState<string[]>(business.services ?? []);
@@ -39,8 +40,8 @@ export default function Settings() {
     <div className="space-y-5">{node}
       <PageHeader title="Settings" />
       <Card className="space-y-3">
-        <div className="flex items-center justify-between"><h2 className="font-display text-xl">Your plan</h2><Badge tone="brand">Free</Badge></div>
-        <p className="text-sm text-charcoal-300">You have full access to everything while we are in early release. Paid plans will come later, and you will always be told first.</p>
+        <div className="flex items-center justify-between"><h2 className="font-display text-xl">Your plan</h2><Badge tone="brand">Active</Badge></div>
+        <p className="text-sm text-charcoal-300">{paidUntil ? `Your subscription is active until ${paidUntil}. Renew before then to keep full access.` : 'Your subscription is active.'}</p>
       </Card>
       <Card className="space-y-4">
         <h2 className="font-display text-xl">Services you offer</h2>
