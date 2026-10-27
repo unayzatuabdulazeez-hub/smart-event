@@ -193,4 +193,24 @@ end $$;
 -- See everyone: select * from public.admin_customers();
 create or replace function public.admin_customers()
 returns table (email text, business text, access text, paid_until timestamptz, days_left int, signed_up timestamptz, note text)
-language sql se
+language sql se security definer set search_path = public as $$
+  select u.email::text, b.name,
+         case when s.status = 'active' and s.paid_until > now() then 'active'
+              when s.status = 'active' then 'expired'
+              else s.status end,
+         s.paid_until,
+         case when s.paid_until > now() then ceil(extract(epoch from (s.paid_until - now())) / 86400)::int else 0 end,
+         b.created_at, s.note
+  from public.businesses b
+  join auth.users u on u.id = b.owner_id
+  join public.subscriptions s on s.business_id = b.id
+  order by b.created_at desc;
+$$;
+
+revoke all on function public.admin_activate(text, int, text) from public, anon, authenticated;
+revoke all on function public.admin_deactivate(text, text) from public, anon, authenticated;
+revoke all on function public.admin_customers() from public, anon, authenticated;
+revoke all on function public.has_access(uuid) from public, anon;
+grant execute on function public.has_access(uuid) to authenticated, service_role;
+revoke all on function public.is_active_member(uuid) from public, anon;
+grant execute on function public.is_active_member(uuid) to authenticated, service_role;
