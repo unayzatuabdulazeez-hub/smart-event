@@ -193,7 +193,7 @@ end $$;
 -- See everyone: select * from public.admin_customers();
 create or replace function public.admin_customers()
 returns table (email text, business text, access text, paid_until timestamptz, days_left int, signed_up timestamptz, note text)
-language sql se security definer set search_path = public as $$
+language sql security definer set search_path = public as $$
   select u.email::text, b.name,
          case when s.status = 'active' and s.paid_until > now() then 'active'
               when s.status = 'active' then 'expired'
