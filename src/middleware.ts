@@ -4,7 +4,7 @@ import { createServerClient } from '@supabase/ssr';
 type CookieToSet = { name: string; value: string; options?: Record<string, unknown> };
 
 // Staff area requires a session. /portal/*, /business/*, /login, /signup are public.
-const PROTECTED = ['/app'];
+const PROTECTED = ['/app', '/admin'];
 
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({ request: req });
@@ -35,4 +35,4 @@ export async function middleware(req: NextRequest) {
   return res;
 }
 
-export const config = { matcher: ['/app/:path*', '/login', '/signup'] };
+export const config = { matcher: ['/app/:path*', '/admin', '/login', '/signup'] };
