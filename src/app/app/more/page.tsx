@@ -1,10 +1,11 @@
 'use client';
 import Link from 'next/link';
-import { BarChart3, Calculator, CheckSquare, FileText, Globe, HeartHandshake, LayoutTemplate, Palette, Receipt, Settings, Store, Truck } from 'lucide-react';
+import { BarChart3, Calculator, CheckSquare, FileText, Globe, HeartHandshake, Inbox, LayoutTemplate, Palette, Receipt, Settings, Store, Truck } from 'lucide-react';
 import { useBusiness } from '@/components/BusinessProvider';
 import { PageHeader } from '@/components/ui';
 
 const ITEMS = [
+  { href: '/app/requests', label: 'Requests', icon: Inbox, hint: 'Customers asking to book' },
   { href: '/app/quotes', label: 'Quotes', icon: FileText, hint: 'Professional quotations' },
   { href: '/app/vendors', label: 'Vendors', icon: Truck, hint: 'Your suppliers and partners' },
   { href: '/app/expenses', label: 'Expenses', icon: Receipt, hint: 'Costs across events' },
